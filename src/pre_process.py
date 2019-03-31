@@ -139,28 +139,30 @@ class CenterCrop(object):
         return img
 
 
-def image_train(resize_size=256, crop_size=224, alexnet=False):
-    if not alexnet:
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+def image_train(resize_size=256, crop_size=224, augmentation=True):
+
+    # do augmentation
+    if augmentation:
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        return transforms.Compose([
+            ResizeImage(resize_size),
+            # transforms.CenterCrop(crop_size),
+            transforms.RandomResizedCrop(crop_size),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize
+        ])
     else:
-        normalize = Normalize(meanfile='./ilsvrc_2012_mean.npy')
-    return transforms.Compose([
-        ResizeImage(resize_size),
-        # transforms.CenterCrop(crop_size),
-        transforms.RandomResizedCrop(crop_size),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        normalize
-    ])
+        return transforms.Compose([
+            ResizeImage(crop_size),
+            transforms.ToTensor()
+        ])
 
 
-def image_test(resize_size=256, crop_size=224, alexnet=False):
-    if not alexnet:
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
-    else:
-        normalize = Normalize(meanfile='./ilsvrc_2012_mean.npy')
+def image_test(resize_size=256, crop_size=224):
+
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
     start_first = 0
     start_center = (resize_size - crop_size - 1) / 2
     start_last = resize_size - crop_size - 1

@@ -23,9 +23,9 @@ def init_weights(m):
         nn.init.zeros_(m.bias)
 
 class ResNetFc(nn.Module):
-    def __init__(self, resnet_name, use_bottleneck=True, bottleneck_dim=256, new_cls=False, class_num=1000):
+    def __init__(self, resnet_name, pretrained=True, weight_init=True, use_bottleneck=True, bottleneck_dim=256, new_cls=False, class_num=1000):
         super(ResNetFc, self).__init__()
-        model_resnet = resnet_dict[resnet_name](pretrained=True)
+        model_resnet = resnet_dict[resnet_name](pretrained=pretrained)
         self.conv1 = model_resnet.conv1
         self.bn1 = model_resnet.bn1
         self.relu = model_resnet.relu
@@ -44,12 +44,14 @@ class ResNetFc(nn.Module):
             if self.use_bottleneck:
                 self.bottleneck = nn.Linear(model_resnet.fc.in_features, bottleneck_dim)
                 self.fc = nn.Linear(bottleneck_dim, class_num)
-                self.bottleneck.apply(init_weights)
-                self.fc.apply(init_weights)
+                if weight_init:
+                    self.bottleneck.apply(init_weights)
+                    self.fc.apply(init_weights)
                 self.__in_features = bottleneck_dim
             else:
                 self.fc = nn.Linear(model_resnet.fc.in_features, class_num)
-                self.fc.apply(init_weights)
+                if weight_init:
+                    self.fc.apply(init_weights)
                 self.__in_features = model_resnet.fc.in_features
         else:
             self.fc = model_resnet.fc

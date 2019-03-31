@@ -12,6 +12,10 @@ from torchvision.datasets.folder import IMG_EXTENSIONS
 
 from utils import *
 
+def make_dset_list(filename='train.txt', path='../data/train'):
+    # TODO: make dataset list for convenience
+    pass
+
 
 def make_dataset(image_list, labels, datadir):
     if labels:
