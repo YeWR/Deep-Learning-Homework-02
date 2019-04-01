@@ -25,8 +25,8 @@ def train(args):
     train_transforms = prep.image_train(augmentation=args.augmentation)
     valid_transforms = prep.image_test()
 
-    train_dset = ImageList(open(args.train_list).readlines(), datadir=args.data_dir, transform=train_transforms)
-    valid_dset = ImageList(open(args.valid_list).readlines(), datadir=args.data_dir, transform=valid_transforms)
+    train_dset = ImageList(open(args.train_list).readlines(), datadir='', transform=train_transforms)
+    valid_dset = ImageList(open(args.valid_list).readlines(), datadir='', transform=valid_transforms)
 
     train_loader = DataLoader(train_dset, batch_size=args.batch_size, shuffle=True, num_workers=4, drop_last=False)
     valid_loader = DataLoader(valid_dset, batch_size=args.batch_size, shuffle=False, num_workers=4, drop_last=False)
@@ -98,6 +98,7 @@ if __name__=="__main__":
     parser.add_argument('--net', type=str, default='ResNet50', help="Options: ResNet18,34,50,101,152; AlexNet")
     parser.add_argument('--pretrained', type=bool, default=False, help="the backbone is pretrained")
     parser.add_argument('--augmentation', type=bool, default=False, help="the backbone is pretrained")
+    parser.add_argument('--weight_init', type=bool, default=False, help="init weight in the new layers")
     parser.add_argument('--data_dir', type=str, default='../data/', help="The data set directory")
     parser.add_argument('--class_num', type=int, default=65, help="class number of the task")
     parser.add_argument('--batch_size', type=int, default=64, help="class number of the task")
@@ -119,9 +120,9 @@ if __name__=="__main__":
     args.valid_list = osp.join(args.data_dir, 'valid.txt')
 
     if not osp.exists(args.train_list):
-        make_dset_list(filename='train.txt', path=osp.join(args.data_dir, 'train'))
+        make_dset_list(filename=args.train_list, path=osp.join(args.data_dir, 'train'))
     if not osp.exists(args.valid_list):
-        make_dset_list(filename='valid.txt', path=osp.join(args.data_dir, 'valid'))
+        make_dset_list(filename=args.valid_list, path=osp.join(args.data_dir, 'valid'))
 
     if not osp.exists(args.ckpt_path):
         os.system('mkdir -p ' + args.ckpt_path)
