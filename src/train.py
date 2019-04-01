@@ -6,11 +6,13 @@ import numpy as np
 
 import torch
 import torch.nn as nn
+import torch.optim as optim
 from torch.utils.data import DataLoader
 
+import network
+import lr_schedule
 from logger import Logger
 import pre_process as prep
-import network
 from data_list import ImageList, make_dset_list
 
 def validate(args):
@@ -44,9 +46,12 @@ def train(args):
     net = net.cuda()
     parameter_list = net.get_parameters()
 
-    ## set optimizer
-    ## TODO: set optimizer for SGD and Adam
-    optimizer = None
+    ## set optimizer and learning scheduler
+    if args.opt_type == 'SGD':
+        optimizer = optim.SGD(parameter_list, lr=1.0, momentum=args.momentum, weight_decay=0.0005, nesterov=True)
+    lr_param = {'lr': args.lr, "gamma": 0.001, "power": 0.75}
+    lr_scheduler = lr_schedule.inv_lr_scheduler
+
 
     ## gpu
     gpus = args.gpu_id.split(',')
@@ -79,7 +84,12 @@ def train(args):
 
         ## train the model
         net.train(True)
+        optimizer = lr_scheduler(optimizer, epoch, **lr_param)
         optimizer.zero_grad()
+
+        ## cuda
+        img = img.cuda()
+        label = label.cuda()
 
         feature, output = net(img)
 
