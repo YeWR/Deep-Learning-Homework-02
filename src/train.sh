@@ -1,9 +1,10 @@
+#!/bin/bash
 set -ex
 
 export CUDA_VISIBLE_DEVICES=0
-model=A
+model="A"
 
-if [${model} = "A"]; then
+if [ $model = "A" ]; then
     ## model A
     python train.py \
             --gpu_id 0 \
@@ -15,10 +16,10 @@ if [${model} = "A"]; then
             --opt_type SGD \
             --lr 0.001 \
             --debug_str model_A
-elif [${model} = "B"]; then
+elif [ $model = "B" ]; then
     ## model B
     python train.py
-elif [${model} = "C"]; then
+elif [ $model = "C" ]; then
     ## model C
     python train.py
 else
