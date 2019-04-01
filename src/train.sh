@@ -18,7 +18,16 @@ if [ $model = "A" ]; then
             --debug_str model_A
 elif [ $model = "B" ]; then
     ## model B
-    python train.py
+    python train.py \
+            --gpu_id 0 \
+            --net ResNet50 \
+            --pretrained 0 \
+            --augmentation 0 \
+            --weight_init 0 \
+            --batch_size 64 \
+            --opt_type SGD \
+            --lr 0.001 \
+            --debug_str model_B
 elif [ $model = "C" ]; then
     ## model C
     python train.py
