@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=3
 model="A"
 
 if [ $model = "A" ]; then
@@ -12,9 +12,9 @@ if [ $model = "A" ]; then
             --pretrained 1 \
             --augmentation 1 \
             --weight_init 1 \
-            --batch_size 64 \
+            --batch_size 96 \
             --opt_type SGD \
-            --lr 0.001 \
+            --lr 0.002 \
             --debug_str model_A
 elif [ $model = "B" ]; then
     ## model B
@@ -22,11 +22,11 @@ elif [ $model = "B" ]; then
             --gpu_id 0 \
             --net ResNet50 \
             --pretrained 0 \
-            --augmentation 0 \
-            --weight_init 0 \
-            --batch_size 64 \
+            --augmentation 1 \
+            --weight_init 1 \
+            --batch_size 96 \
             --opt_type SGD \
-            --lr 0.001 \
+            --lr 0.002 \
             --debug_str model_B
 elif [ $model = "C" ]; then
     ## model C

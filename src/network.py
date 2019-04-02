@@ -80,3 +80,14 @@ class ResNetFc(nn.Module):
         else:
             parameter_list = [{"params": self.parameters(), "lr_mult": 1, 'decay_mult': 2}]
         return parameter_list
+
+class MyNet(nn.Module):
+    def __init__(self, class_num=65):
+        super(MyNet, self).__init__()
+
+
+    def forward(self, x):
+        pass
+
+    def get_parameters(self):
+        pass

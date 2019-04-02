@@ -141,9 +141,10 @@ class CenterCrop(object):
 
 def image_train(resize_size=256, crop_size=224, augmentation=True):
 
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
     # do augmentation
     if augmentation:
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         return transforms.Compose([
             ResizeImage(resize_size),
             # transforms.CenterCrop(crop_size),
@@ -155,7 +156,8 @@ def image_train(resize_size=256, crop_size=224, augmentation=True):
     else:
         return transforms.Compose([
             ResizeImage(crop_size),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            normalize
         ])
 
 

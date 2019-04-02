@@ -138,9 +138,9 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Deep Learning homework 2')
     parser.add_argument('--gpu_id', type=str, nargs='?', default='0', help="device id to run")
     parser.add_argument('--net', type=str, default='ResNet50', help="Options: ResNet18,34,50,101,152; AlexNet")
-    parser.add_argument('--pretrained', type=bool, default=False, help="the backbone is pretrained")
-    parser.add_argument('--augmentation', type=bool, default=False, help="the backbone is pretrained")
-    parser.add_argument('--weight_init', type=bool, default=False, help="init weight in the new layers")
+    parser.add_argument('--pretrained', type=int, default=0, help="the backbone is pretrained")
+    parser.add_argument('--augmentation', type=int, default=0, help="the backbone is pretrained")
+    parser.add_argument('--weight_init', type=int, default=0, help="init weight in the new layers")
     parser.add_argument('--data_dir', type=str, default='../data/', help="The data set directory")
     parser.add_argument('--class_num', type=int, default=65, help="class number of the task")
     parser.add_argument('--batch_size', type=int, default=64, help="class number of the task")
@@ -153,7 +153,7 @@ if __name__=="__main__":
     args = parser.parse_args()
 
     ## prepare the path for models and visualizations
-    output_str = "pretrained-%s,augmentation-%s,opt_type-%s,momentum-%s,lr-%s,batch-%s,debug-%s" % (args.pretrained, args.augmentation, args.opt_type, args.momentum, args.lr, args.batch_size, args.debug_str)
+    output_str = "pretrained-%s,augmentation-%s,weight_init-%s,opt_type-%s,momentum-%s,lr-%s,batch-%s,debug-%s" % (args.pretrained, args.augmentation, args.weight_init, args.opt_type, args.momentum, args.lr, args.batch_size, args.debug_str)
 
     args.vis_path = "vis/" + output_str
     args.ckpt_path = "models/" + output_str
