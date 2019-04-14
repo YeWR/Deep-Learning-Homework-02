@@ -57,12 +57,12 @@ def train(args):
     ## set the model
     net = None
     if args.net == 'MyOwn':
-        ## TODO: model C
-        pass
+        ## model C
+        net = network.ResNet(network.Bottleneck, [3,4,6,3], weight_init=args.weight_init, use_bottleneck=args.bottleneck, num_classes=args.class_num, weight=args.weight)
     else:
-        ## model A -> Resnet50 == pretrained == not weight init == new classifier
-        ## model B -> Resnet50 == not pretrained == not weight init == new classifier
-        net = network.ResNetFc(resnet_name=args.net, pretrained=args.pretrained, weight_init=args.weight_init, new_cls=True, class_num=args.class_num)
+        ## model A -> Resnet50 == pretrained
+        ## model B -> Resnet50 == not pretrained
+        net = network.ResNetFc(resnet_name=args.net, pretrained=args.pretrained, weight_init=args.weight_init, use_bottleneck=args.bottleneck, new_cls=True, class_num=args.class_num)
 
     net = net.cuda()
     parameter_list = net.get_parameters()
@@ -139,8 +139,11 @@ if __name__=="__main__":
     parser.add_argument('--gpu_id', type=str, nargs='?', default='0', help="device id to run")
     parser.add_argument('--net', type=str, default='ResNet50', help="Options: ResNet18,34,50,101,152; AlexNet")
     parser.add_argument('--pretrained', type=int, default=0, help="the backbone is pretrained")
+    parser.add_argument('--bottleneck', type=int, default=0, help="use bottleneck in Resnet")
     parser.add_argument('--augmentation', type=int, default=0, help="the backbone is pretrained")
     parser.add_argument('--weight_init', type=int, default=0, help="init weight in the new layers")
+    parser.add_argument('--max_iter', type=int, default=1000, help="tradeoff of residual block")
+    parser.add_argument('--weight', type=float, default=1., help="tradeoff of residual block")
     parser.add_argument('--data_dir', type=str, default='../data/', help="The data set directory")
     parser.add_argument('--class_num', type=int, default=65, help="class number of the task")
     parser.add_argument('--batch_size', type=int, default=64, help="class number of the task")
@@ -153,7 +156,7 @@ if __name__=="__main__":
     args = parser.parse_args()
 
     ## prepare the path for models and visualizations
-    output_str = "pretrained-%s,augmentation-%s,weight_init-%s,opt_type-%s,momentum-%s,lr-%s,batch-%s,debug-%s" % (args.pretrained, args.augmentation, args.weight_init, args.opt_type, args.momentum, args.lr, args.batch_size, args.debug_str)
+    output_str = "pretrained-%s,bottleneck-%s,augmentation-%s,weight_init-%s,opt_type-%s,momentum-%s,lr-%s,batch-%s,weight-%s,debug-%s" % (args.pretrained, args.bottleneck, args.augmentation, args.weight_init, args.opt_type, args.momentum, args.lr, args.batch_size, args.weight, args.debug_str)
 
     args.vis_path = "vis/" + output_str
     args.ckpt_path = "models/" + output_str
@@ -168,7 +171,7 @@ if __name__=="__main__":
 
     if not osp.exists(args.ckpt_path):
         os.system('mkdir -p ' + args.ckpt_path)
-    args.log = open(osp.join(args.ckpt_path, "log.txt"), "w")
+    args.log = open(osp.join(args.ckpt_path, "log.md"), "w")
     if not osp.exists(args.ckpt_path):
         os.mkdir(args.ckpt_path)
     if not osp.exists('vis'):

@@ -155,7 +155,8 @@ def image_train(resize_size=256, crop_size=224, augmentation=True):
         ])
     else:
         return transforms.Compose([
-            ResizeImage(crop_size),
+            ResizeImage(resize_size),
+            transforms.CenterCrop(crop_size),
             transforms.ToTensor(),
             normalize
         ])
