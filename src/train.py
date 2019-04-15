@@ -86,9 +86,9 @@ def train(args):
         #     name = '.'.join(item.split('.')[1:])
         #     net.state_dict()[name] = value
         net.load_state_dict(resume_ckpt['net'])
-        vis.do_confusion_matrix(valid_loader, net, 'Confusion matrix for model C', 'cm_C.jpg')
+        # vis.do_confusion_matrix(valid_loader, net, 'Confusion matrix for model A', 'cm_A.jpg')
 
-        # vis.plot_TSNE(train_loader, net, 'model_C')
+        vis.plot_TSNE(valid_loader, net, 'model_C')
 
         ## if you want to do this vis, please do not use parallel.
         # guided_backprop.bp_example('./input_images/backpack.jpg', 7, net)

@@ -7,7 +7,7 @@ model="C"
 if [ $model = "A" ]; then
     ## model A
     python train.py \
-            --gpu_id 0 \
+            --gpu_id 0,1 \
             --net ResNet50 \
             --pretrained 1 \
             --bottleneck 0 \
@@ -16,11 +16,13 @@ if [ $model = "A" ]; then
             --batch_size 96 \
             --opt_type SGD \
             --lr 0.006 \
+            --vis 1 \
+            --resume_path models/pretrained-1,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-96,weight-1.0,debug-model_A/best_model.pth \
             --debug_str model_A
 elif [ $model = "B" ]; then
     ## model B
     python train.py \
-            --gpu_id 0 \
+            --gpu_id 0,1 \
             --net ResNet50 \
             --pretrained 0 \
             --bottleneck 0 \
@@ -29,6 +31,8 @@ elif [ $model = "B" ]; then
             --batch_size 96 \
             --opt_type SGD \
             --lr 0.006 \
+            --vis 1 \
+            --resume_path models/pretrained-0,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-96,weight-1.0,debug-model_B/best_model.pth \
             --debug_str model_B
 elif [ $model = "C" ]; then
     ## model C
