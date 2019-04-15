@@ -14,6 +14,7 @@ import lr_schedule
 from logger import Logger
 import pre_process as prep
 from data_list import ImageList, make_dset_list
+from utils import vis
 
 
 def validate(model, loader):
@@ -40,9 +41,6 @@ def validate(model, loader):
 
 
 def train(args):
-
-    ## init logger
-    logger = Logger(ckpt_path=args.ckpt_path, tsbd_path=args.vis_path)
 
     ## pre process
     train_transforms = prep.image_train(augmentation=args.augmentation)
@@ -82,10 +80,18 @@ def train(args):
         print('gpus: ', [int(i) for i in gpus])
         net = nn.DataParallel(net, device_ids=[int(i) for i in gpus])
 
+    if args.vis:
+        resume_ckpt = torch.load(args.resume_path)
+        net.load_state_dict(resume_ckpt['net'])
+        vis.do_confusion_matrix(valid_loader, net, 'Confusion matrix for model C', 'cm_C.jpg')
+        return
+
     ## for save model
     model = {}
     model['net'] = net
 
+    ## init logger
+    logger = Logger(ckpt_path=args.ckpt_path, tsbd_path=args.vis_path)
     ## log
     logger.reset()
 
@@ -153,6 +159,8 @@ if __name__=="__main__":
     parser.add_argument('--opt_type', type=str, default='SGD', help="the optimization type: SGD or Adam")
     parser.add_argument('--momentum', type=float, default=0.9, help="momentum for SGD")
     parser.add_argument('--lr', type=float, default=0.001, help="initial learning rate")
+    parser.add_argument('--vis', type=int, default=0, help="do visualization")
+    parser.add_argument('--resume_path', type=str, default='')
     parser.add_argument('--debug_str', type=str, default='')
 
     args = parser.parse_args()

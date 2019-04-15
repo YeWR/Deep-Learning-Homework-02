@@ -113,7 +113,7 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     thresh = cm.max() / 2.
     for i in range(cm.shape[0]):
         for j in range(cm.shape[1]):
-            ax.text(j, i, format(cm[i, j], fmt),
+            ax.text(j, i, '',
                     ha="center", va="center",
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
@@ -121,7 +121,8 @@ def plot_confusion_matrix(y_true, y_pred, classes,
 
 
 def do_confusion_matrix(loader, model, title, file_name):
-    classes = [str(i) for i in range(65)]
+    classes = np.array(['' for i in range(65)])
+    classes[0] = '0'
 
     y_test = []
     y_pred = []
@@ -131,19 +132,33 @@ def do_confusion_matrix(loader, model, title, file_name):
     for test_img, test_label, _ in loader:
         _, outputs_test = model(test_img.cuda())
 
-        output = outputs_test.detach().cpu().numpy()
-        pred = np.Softmax(output)
-        pred = np.argmax(pred)
+        pred = torch.argmax(nn.Softmax()(outputs_test), dim=1)
 
-        y_pred += pred.tolist()
+        y_pred += pred.detach().cpu().numpy().tolist()
         y_test += test_label.detach().cpu().numpy().tolist()
 
     plot_confusion_matrix(y_test, y_pred, classes=classes, normalize=True,
                           title=title)
-    plt.savefig(file_name, bbox_inches='tight')
+    plt.savefig(file_name)
 
 
 if __name__ == '__main__':
-    pass
-    # resume_path = '../../models/pretrained-0,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-32,weight-1.0,debug-model_C_att'
-    # resume_ckpt = torch.load(resume_path)
+    # import some data to play with
+    iris = datasets.load_iris()
+    X = iris.data
+    y = iris.target
+    class_names = iris.target_names
+
+    # Split the data into a training set and a test set
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+    # Run classifier, using a model that is too regularized (C too low) to see
+    # the impact on the results
+    classifier = svm.SVC(kernel='linear', C=0.01)
+    y_pred = classifier.fit(X_train, y_train).predict(X_test)
+
+    # Plot normalized confusion matrix
+    plot_confusion_matrix(y_test, y_pred, classes=class_names, normalize=True,
+                          title='Normalized confusion matrix')
+
+    plt.show()
