@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-export CUDA_VISIBLE_DEVICES=2,3
+export CUDA_VISIBLE_DEVICES=4,5
 model="C"
 
 if [ $model = "A" ]; then
@@ -15,7 +15,7 @@ if [ $model = "A" ]; then
             --weight_init 1 \
             --batch_size 96 \
             --opt_type SGD \
-            --lr 0.002 \
+            --lr 0.006 \
             --debug_str model_A
 elif [ $model = "B" ]; then
     ## model B
@@ -28,7 +28,7 @@ elif [ $model = "B" ]; then
             --weight_init 1 \
             --batch_size 96 \
             --opt_type SGD \
-            --lr 0.002 \
+            --lr 0.006 \
             --debug_str model_B
 elif [ $model = "C" ]; then
     ## model C

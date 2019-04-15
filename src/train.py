@@ -14,7 +14,7 @@ import lr_schedule
 from logger import Logger
 import pre_process as prep
 from data_list import ImageList, make_dset_list
-from utils import vis
+from utils import vis, cnn_layer_visualization, guided_backprop
 
 
 def validate(model, loader):
@@ -82,8 +82,18 @@ def train(args):
 
     if args.vis:
         resume_ckpt = torch.load(args.resume_path)
+        # for item, value in resume_ckpt['net'].items():
+        #     name = '.'.join(item.split('.')[1:])
+        #     net.state_dict()[name] = value
         net.load_state_dict(resume_ckpt['net'])
         vis.do_confusion_matrix(valid_loader, net, 'Confusion matrix for model C', 'cm_C.jpg')
+
+        # vis.plot_TSNE(train_loader, net, 'model_C')
+
+        ## if you want to do this vis, please do not use parallel.
+        # guided_backprop.bp_example('./input_images/backpack.jpg', 7, net)
+        # guided_backprop.bp_example('./input_images/chair.jpg', 63, net)
+        # guided_backprop.bp_example('./input_images/bear.jpg', 0, net)
         return
 
     ## for save model

@@ -21,10 +21,15 @@ import seaborn as sns
 def scatter(x, colors, file_name, scale=7):
     f = plt.figure(figsize=(226 / 15, 212 / 15))
     ax = plt.subplot(aspect='equal')
-    x_source, x_target = x[colors == 1, :], x[colors == 0, :]
+    cmap = plt.cm.get_cmap('hsv', 65 + 1)
+    for i in range(65):
+        temp = x[colors == i, :]
+        ax.scatter(temp[:, 0], temp[:, 1], lw=0, s=scale, color=cmap(i))
+
+    # x_source, x_target = x[colors == 1, :], x[colors == 0, :]
     ## draw data points in a two-demensions-space
-    ax.scatter(x_source[:, 0], x_source[:, 1], lw=0, s=scale, color='red')
-    ax.scatter(x_target[:, 0], x_target[:, 1], lw=0, s=scale, color='blue')
+    # ax.scatter(x_source[:, 0], x_source[:, 1], lw=0, s=scale, color='red')
+    # ax.scatter(x_target[:, 0], x_target[:, 1], lw=0, s=scale, color='blue')
     # plt.xlim(-40, 40)
     # plt.ylim(-40, 40)
     ax.set_xticks([])
@@ -35,35 +40,27 @@ def scatter(x, colors, file_name, scale=7):
     plt.show()
 
 def plot_TSNE(dset_loader, model, title):
-    base_network = model["base_network"]
-
-    base_network.train(False)
-    source_dset = dset_loader['source']
-    target_dset = dset_loader['test0']
-    x_source = []
-    x_target = []
+    model.train(False)
+    features = []
+    labels = []
 
     # source
-    for test_img, test_label, _ in source_dset:
-        features_test, outputs_test = base_network(test_img.cuda())
+    for test_img, test_label, _ in dset_loader:
+        features_test, outputs_test = model(test_img.cuda())
 
-        for out in outputs_test.detach().cpu().numpy():
-            x_source.append(out)
+        for out, l in zip(outputs_test.detach().cpu().numpy(), test_label.detach().cpu().numpy()):
+            features.append(out)
+            labels.append(l)
 
-    # target
-    for test_img, test_label, _ in target_dset:
-        features_test, outputs_test = base_network(test_img.cuda())
+    features = np.array(features)
+    labels = np.array(labels)
 
-        for out in outputs_test.detach().cpu().numpy():
-            x_target.append(out)
-
-    x_source = np.array(x_source)
-    x_target = np.array(x_target)
-    colors = np.array([1] * len(x_source) + [0] * len(x_target))
-    all_features_np = np.concatenate((x_source, x_target))
-    tsne_features = TSNE(random_state=20190129).fit_transform(all_features_np)
-    for scale in range(6, 15):
-        scatter(tsne_features, colors, 'res/' + title, scale)
+    # colors = np.array([1] * len(x_source) + [0] * len(x_target))
+    # all_features_np = np.concatenate((x_source, x_target))
+    tsne_features = TSNE(random_state=20190129).fit_transform(features)
+    scatter(tsne_features, labels, title, 10)
+    # for scale in range(6, 15):
+    #     scatter(tsne_features, labels, title, scale)
 
 # confusion matrix
 def plot_confusion_matrix(y_true, y_pred, classes,

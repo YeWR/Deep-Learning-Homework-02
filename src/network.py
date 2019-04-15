@@ -210,6 +210,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AvgPool2d(7, stride=1)
 
+        # self.features = nn.Sequential(self.conv1, self.bn1, self.relu, self.maxpool, self.layer1, self.layer2, self.layer3, self.layer4, self.avgpool)
+
         if use_bottleneck:
             self.bottleneck = nn.Linear(512 * block.expansion, 256)
             self.fc = nn.Linear(256, num_classes)
@@ -243,6 +245,32 @@ class ResNet(nn.Module):
             layers.append(block(self.inplanes, planes, weight=self.weight))
 
         return nn.Sequential(*layers)
+
+    def get_feature(self, layer, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        if layer == 'layer3':
+            return x
+
+        x = self.layer4(x)
+        if layer == 'layer4':
+            return x
+
+        x = self.avgpool(x)
+        if layer == 'pooling':
+            return x
+
+        x = x.view(x.size(0), -1)
+        if self.use_bottleneck:
+            x = self.bottleneck(x)
+        x = self.fc(x)
+        return x
 
     def forward(self, x):
         x = self.conv1(x)
