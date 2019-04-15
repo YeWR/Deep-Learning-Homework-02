@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-export CUDA_VISIBLE_DEVICES=4,5
+export CUDA_VISIBLE_DEVICES=3
 model="C"
 
 if [ $model = "A" ]; then
@@ -37,7 +37,7 @@ elif [ $model = "B" ]; then
 elif [ $model = "C" ]; then
     ## model C
     python train.py \
-            --gpu_id 0,1 \
+            --gpu_id 0 \
             --net MyOwn \
             --bottleneck 0 \
             --augmentation 1 \
@@ -45,8 +45,6 @@ elif [ $model = "C" ]; then
             --batch_size 32 \
             --opt_type SGD \
             --lr 0.006 \
-            --vis 1 \
-            --resume_path models/pretrained-0,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-32,weight-1.0,debug-model_C_att/best_model.pth \
             --debug_str model_C_att
 else
     echo "Unknown model training."
