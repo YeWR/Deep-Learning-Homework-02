@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-export CUDA_VISIBLE_DEVICES=6
+export CUDA_VISIBLE_DEVICES=1
 model="C"
 
 if [ $model = "A" ]; then
@@ -10,8 +10,8 @@ if [ $model = "A" ]; then
             --gpu_id 0 \
             --net ResNet50 \
             --pretrained 1 \
-            --bottleneck 1 \
-            --augmentation 0 \
+            --bottleneck 0 \
+            --augmentation 1 \
             --weight_init 1 \
             --batch_size 96 \
             --opt_type SGD \
@@ -23,8 +23,8 @@ elif [ $model = "B" ]; then
             --gpu_id 0 \
             --net ResNet50 \
             --pretrained 0 \
-            --bottleneck 1 \
-            --augmentation 0 \
+            --bottleneck 0 \
+            --augmentation 1 \
             --weight_init 1 \
             --batch_size 96 \
             --opt_type SGD \
@@ -40,7 +40,7 @@ elif [ $model = "C" ]; then
             --weight_init 1 \
             --batch_size 32 \
             --opt_type SGD \
-            --lr 0.006 \
+            --lr 0.008 \
             --debug_str model_C_att
 else
     echo "Unknown model training."

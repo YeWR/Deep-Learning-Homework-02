@@ -70,6 +70,8 @@ def train(args):
     ## set optimizer and learning scheduler
     if args.opt_type == 'SGD':
         optimizer = optim.SGD(parameter_list, lr=1.0, momentum=args.momentum, weight_decay=0.0005, nesterov=True)
+    elif args.opt_type == 'Adam':
+        optimizer = optim.Adam(parameter_list, lr=args.lr, weight_decay=0.0005)
     lr_param = {'lr': args.lr, "gamma": 0.001, "power": 0.75}
     lr_scheduler = lr_schedule.inv_lr_scheduler
 
