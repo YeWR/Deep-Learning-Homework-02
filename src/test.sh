@@ -6,8 +6,8 @@ model="C"
 
 if [ $model = "A" ]; then
     ## model A
-    python train.py \
-            --gpu_id 0,1 \
+    python test.py \
+            --gpu_id 0 \
             --net ResNet50 \
             --pretrained 1 \
             --bottleneck 0 \
@@ -16,13 +16,12 @@ if [ $model = "A" ]; then
             --batch_size 96 \
             --opt_type SGD \
             --lr 0.006 \
-            --vis 1 \
             --resume_path models/pretrained-1,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-96,weight-1.0,debug-model_A/best_model.pth \
-            --debug_str model_A
+            --debug_str test_A
 elif [ $model = "B" ]; then
     ## model B
-    python train.py \
-            --gpu_id 0,1 \
+    python test.py \
+            --gpu_id 0 \
             --net ResNet50 \
             --pretrained 0 \
             --bottleneck 0 \
@@ -31,12 +30,11 @@ elif [ $model = "B" ]; then
             --batch_size 96 \
             --opt_type SGD \
             --lr 0.006 \
-            --vis 1 \
             --resume_path models/pretrained-0,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-96,weight-1.0,debug-model_B/best_model.pth \
-            --debug_str model_B
+            --debug_str test_B
 elif [ $model = "C" ]; then
     ## model C
-    python train.py \
+    python test.py \
             --gpu_id 0 \
             --net MyOwn \
             --bottleneck 0 \
@@ -45,7 +43,8 @@ elif [ $model = "C" ]; then
             --batch_size 32 \
             --opt_type SGD \
             --lr 0.006 \
-            --debug_str model_C_att_no_bn
+            --resume models/pretrained-0,bottleneck-0,augmentation-1,weight_init-1,opt_type-SGD,momentum-0.9,lr-0.006,batch-32,weight-1.0,debug-model_C_att/best_model.pth \
+            --debug_str test_C
 else
     echo "Unknown model training."
 fi

@@ -23,6 +23,15 @@ def make_dset_list(filename='../data/train.txt', path='../data/train'):
                 file.write(tag + '\n')
     file.close()
 
+def make_test_list(filename='../data/test.txt', path='../data/test'):
+    file = open(filename, 'w')
+    path_list = os.listdir(path)
+    path_list.sort()
+    for label in path_list:
+        p = osp.join(path, label)
+        file.write(p + '\n')
+    file.close()
+
 def make_dataset(image_list, labels, datadir):
     if labels:
         LEN = len(image_list)
@@ -31,8 +40,10 @@ def make_dataset(image_list, labels, datadir):
         if len(image_list[0].split()) > 2:
             images = [(osp.join(datadir, val.split()[0]), np.array([int(la) for la in val.split()[1:]])) for val in
                       image_list]
-        else:
+        elif len(image_list[0].split()) == 2:
             images = [(osp.join(datadir + val.split()[0]), int(val.split()[1])) for val in image_list]
+        else:
+            images = [(osp.join(datadir + val.split()[0]), -1) for val in image_list]
     return images
 
 

@@ -139,6 +139,42 @@ def do_confusion_matrix(loader, model, title, file_name):
     plt.savefig(file_name)
 
 
+def conv_visiual(model):
+
+
+    feature = model
+
+    # layer_vis = visual.CNNLayerVisualization(feature, 0, 0)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 0, 2)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 0, 4)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 5, 1)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 5, 12)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 5, 15)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 7, 0)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 7, 16)
+    # layer_vis.visualise_layer_with_hooks()
+    #
+    # layer_vis = visual.CNNLayerVisualization(feature, 7, 2)
+    # layer_vis.visualise_layer_with_hooks()
+
+    # Layer visualization with pytorch hooks
+
+
+
 if __name__ == '__main__':
     # import some data to play with
     iris = datasets.load_iris()

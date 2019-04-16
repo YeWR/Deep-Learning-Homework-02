@@ -289,8 +289,8 @@ class ResNet(nn.Module):
         x = x.view(x.size(0), -1)
         if self.use_bottleneck:
             x = self.bottleneck(x)
-        # x = self.dropout(x)
         y = self.fc(x)
+        # y = self.dropout(y)
         return x, y
 
     def get_parameters(self):

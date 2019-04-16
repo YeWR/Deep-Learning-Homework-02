@@ -8,8 +8,8 @@ import numpy as np
 import torch
 from torch.optim import Adam
 from torchvision import models
+
 from utils.misc_functions import preprocess_image, recreate_image, save_image
-from torch.autograd import Variable
 
 
 class CNNLayerVisualization():
@@ -34,14 +34,13 @@ class CNNLayerVisualization():
         # Hook the selected layer
         self.model[self.selected_layer].register_forward_hook(hook_function)
 
-    def visualise_layer_with_hooks(self, image):
+    def visualise_layer_with_hooks(self):
         # Hook the selected layer
         self.hook_layer()
         # Generate a random image
-        # random_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
+        random_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
         # Process image and return variable
-        # processed_image = preprocess_image(image, False)
-        processed_image = Variable(image, requires_grad=True)
+        processed_image = preprocess_image(random_image, False)
         # Define optimizer for the image
         optimizer = Adam([processed_image], lr=0.1, weight_decay=1e-6)
         for i in range(1, 31):
@@ -60,27 +59,25 @@ class CNNLayerVisualization():
             # Loss function is the mean of the output of the selected layer/filter
             # We try to minimize the mean of the output of that specific filter
             loss = -torch.mean(self.conv_output)
-            # print('Iteration:', str(i), 'Loss:', "{0:.2f}".format(loss))
+            print('Iteration:', str(i), 'Loss:', "{0:.2f}".format(loss.data.numpy()))
             # Backward
             loss.backward()
             # Update image
             optimizer.step()
             # Recreate image
-            self.created_image = recreate_image(processed_image.cpu())
+            self.created_image = recreate_image(processed_image)
             # Save image
             if i % 5 == 0:
                 im_path = '../generated/layer_vis_l' + str(self.selected_layer) + \
                     '_f' + str(self.selected_filter) + '_iter' + str(i) + '.jpg'
                 save_image(self.created_image, im_path)
 
-    def visualise_layer_without_hooks(self, image):
+    def visualise_layer_without_hooks(self):
         # Process image and return variable
         # Generate a random image
-        # random_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
+        random_image = np.uint8(np.random.uniform(150, 180, (224, 224, 3)))
         # Process image and return variable
-        # image = image.reshape(224, 224, 3)
-        # processed_image = preprocess_image(image, False)
-        processed_image = Variable(image, requires_grad=True)
+        processed_image = preprocess_image(random_image, False)
         # Define optimizer for the image
         optimizer = Adam([processed_image], lr=0.1, weight_decay=1e-6)
         for i in range(1, 31):
@@ -103,7 +100,7 @@ class CNNLayerVisualization():
             # Loss function is the mean of the output of the selected layer/filter
             # We try to minimize the mean of the output of that specific filter
             loss = -torch.mean(self.conv_output)
-            # print('Iteration:', str(i), 'Loss:', "{0:.2f}".format(loss.data.numpy()))
+            print('Iteration:', str(i), 'Loss:', "{0:.2f}".format(loss.data.numpy()))
             # Backward
             loss.backward()
             # Update image
