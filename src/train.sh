@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-export CUDA_VISIBLE_DEVICES=5
+export CUDA_VISIBLE_DEVICES=0
 model="C"
 
 if [ $model = "A" ]; then
@@ -45,7 +45,7 @@ elif [ $model = "C" ]; then
             --batch_size 32 \
             --opt_type SGD \
             --lr 0.006 \
-            --debug_str model_C_att_no_bn
+            --debug_str model_C_att
 else
     echo "Unknown model training."
 fi

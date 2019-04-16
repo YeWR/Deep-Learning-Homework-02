@@ -1,14 +1,17 @@
 """
 Created on Thu Oct 21 11:09:09 2017
+
 @author: Utku Ozbulak - github.com/utkuozbulak
 """
+# from model import ResNet, ResidualBlock
+import network
 import os
 import copy
 import numpy as np
 from PIL import Image
 import matplotlib.cm as mpl_color_map
-
 import torch
+import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import models
 
@@ -16,8 +19,10 @@ from torchvision import models
 def convert_to_grayscale(im_as_arr):
     """
         Converts 3d image to grayscale
+
     Args:
         im_as_arr (numpy arr): RGB image with shape (D,W,H)
+
     returns:
         grayscale_im (numpy_arr): Grayscale image with shape (1,W,D)
     """
@@ -32,23 +37,25 @@ def convert_to_grayscale(im_as_arr):
 def save_gradient_images(gradient, file_name):
     """
         Exports the original gradient image
+
     Args:
         gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
         file_name (str): File name to be exported
     """
-    if not os.path.exists('./results'):
-        os.makedirs('./results')
+    if not os.path.exists('../results'):
+        os.makedirs('../results')
     # Normalize
     gradient = gradient - gradient.min()
     gradient /= gradient.max()
     # Save image
-    path_to_file = os.path.join('./results', file_name + '.jpg')
+    path_to_file = os.path.join('../results', file_name + '.jpg')
     save_image(gradient, path_to_file)
 
 
 def save_class_activation_images(org_img, activation_map, file_name):
     """
         Saves cam activation map and activation map on the original image
+
     Args:
         org_img (PIL img): Original image
         activation_map (numpy arr): Activation map (grayscale) 0-255
@@ -104,6 +111,7 @@ def save_image(im, path):
     Args:
         im_as_arr (Numpy array): Matrix of shape DxWxH
         path (str): Path to the image
+
     TODO: Streamline image saving, it is ugly.
     """
     if isinstance(im, np.ndarray):
@@ -131,6 +139,7 @@ def save_image(im, path):
 def preprocess_image(pil_im, resize_im=True):
     """
         Processes image for CNNs
+
     Args:
         PIL_img (PIL_img): Image to process
         resize_im (bool): Resize to 224 or not
@@ -142,8 +151,7 @@ def preprocess_image(pil_im, resize_im=True):
     std = [0.229, 0.224, 0.225]
     # Resize image
     if resize_im:
-        # pil_im.thumbnail((512, 512))
-        pil_im = pil_im.resize((224, 224), Image.NEAREST)
+        pil_im.thumbnail((512, 512))
     im_as_arr = np.float32(pil_im)
     im_as_arr = im_as_arr.transpose(2, 0, 1)  # Convert array to D,W,H
     # Normalize the channels
@@ -157,7 +165,6 @@ def preprocess_image(pil_im, resize_im=True):
     im_as_ten.unsqueeze_(0)
     # Convert to Pytorch variable
     im_as_var = Variable(im_as_ten, requires_grad=True)
-    im_as_var = im_as_var.cuda()
     return im_as_var
 
 
@@ -188,6 +195,7 @@ def get_positive_negative_saliency(gradient):
         Generates positive and negative saliency maps based on the gradient
     Args:
         gradient (numpy arr): Gradient of the operation to visualize
+
     returns:
         pos_saliency ( )
     """
@@ -199,8 +207,10 @@ def get_positive_negative_saliency(gradient):
 def get_example_params(example_index):
     """
         Gets used variables for almost all visualizations, like the image, model etc.
+
     Args:
         example_index (int): Image id to use from examples
+
     returns:
         original_image (numpy arr): Original image read from the file
         prep_img (numpy_arr): Processed image
@@ -209,9 +219,9 @@ def get_example_params(example_index):
         pretrained_model(Pytorch model): Model to use for the operations
     """
     # Pick one of the examples
-    example_list = (('../input_images/snake.jpg', 56),
-                    ('../input_images/cat_dog.png', 243),
-                    ('../input_images/spider.png', 72))
+    example_list = (('input_images/bear.jpg', 0),
+                    ('input_images/cat_dog.png', 243),
+                    ('input_images/spider.png', 72))
     img_path = example_list[example_index][0]
     target_class = example_list[example_index][1]
     file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
@@ -220,9 +230,8 @@ def get_example_params(example_index):
     # Process image
     prep_img = preprocess_image(original_image)
     # Define model
-    pretrained_model = models.alexnet(pretrained=True)
     return (original_image,
             prep_img,
             target_class,
-            file_name_to_export,
-            pretrained_model)
+            file_name_to_export
+            )
