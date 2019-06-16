@@ -1,5 +1,4 @@
 # Deep-Learning-Homework-02
-软件62 叶葳蕤 2016013265
 
 ## 路径说明
 
